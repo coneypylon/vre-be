@@ -1,43 +1,46 @@
-const randomBytes = require('crypto').randomBytes;
-
 const AWS = require('aws-sdk');
-
-const dynamo = new AWS.DynamoDB();
 
 const ddb = new AWS.DynamoDB.DocumentClient();
 
-
+const dynamo = new AWS.DynamoDB();
 
 async function id_exist (id) {
 	var table = "vre-cars";
 	var params = {
+		ConsistentRead: true,
 		TableName: table,
 		Key:{
-			"car_id":id
+			"car_id": {"S":id}
 		}
-	}
+	};
 	try {
-		var iddata = await ddb.getItem(params).promise();
-		console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
-			return true;
-		} catch (error) {
-			console.error("Item not present. Error JSON:", JSON.stringify(error, null, 2));
-			console.log(JSON.stringify(error),null, 2));
+		var iddata = await dynamo.getItem(params).promise();
+		console.log("I am here");
+		console.log("GetItem succeeded:", JSON.stringify(iddata, null, 2));
+		if (JSON.stringify(iddata, null, 2) === "{}"){
 			return false;
+		} else {
+			return true;
+		}
+		} catch (error) {
+			console.error("Failed to Get test car. Error JSON:", JSON.stringify(error, null, 2));
+			console.log(JSON.stringify(error),null, 2);
+			throw error;
 		}
 }
 
 async function uuid() {
-	var present = true
-	var token = "42069"
+	var present = true;
+	var token = "42069";
 	while (present === true)
 	{
-		require('crypto').randomBytes(48, function(err, buffer) {
+		require('crypto').randomBytes(16, function(err, buffer) {
+			if (err) throw err;
 			token = buffer.toString('hex');
 		});
-		present = await id_exist(token)
-	};
-	return token
+		present = await id_exist(token);
+	}
+	return token;
 }
 
 
