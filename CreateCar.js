@@ -15,7 +15,6 @@ async function id_exist (id) {
 	};
 	try {
 		var iddata = await dynamo.getItem(params).promise();
-		console.log("I am here");
 		console.log("GetItem succeeded:", JSON.stringify(iddata, null, 2));
 		if (JSON.stringify(iddata, null, 2) === "{}"){
 			return false;
@@ -34,7 +33,7 @@ async function uuid() {
 	var token = "42069";
 	while (present === true)
 	{
-		require('crypto').randomBytes(16, function(err, buffer) {
+		require('crypto').randomBytes(8, function(err, buffer) {
 			if (err) throw err;
 			token = buffer.toString('hex');
 		});
@@ -55,6 +54,8 @@ exports.handler = async (event, context) => {
 		TableName:table,
 		Item:{
 			"car_id":id,
+			"cargo":event.cargo,
+			"loaded":event.loaded,
 			"current_layout":event.layout,
 			"previous_layouts":[event.layout]
 		}
