@@ -18,7 +18,7 @@ exports.handler = async (event) => {
 		console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
 			return data;
 		} catch (error) {
-			console.error("Unable to get item. Error JSON:", JSON.stringify(error, null, 2));
+			console.error("Unable to update item. Error JSON:", JSON.stringify(error, null, 2));
 			return error;
 		}
 };
